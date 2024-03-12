@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   
+    <title>Sign-up</title>
+   
+    <style>
+        /* styles.css */
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color:grey;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.signup-container {
+    text-align: center;
+}
+
+form {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    margin-top: 20px; 
+}
+
+h2 {
+    color: #333;
+    margin-bottom: 20px; 
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px 0;
+    text-align: left;
+}
+
+input {
+    width: calc(100% - 12px);
+    padding: 8px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    width: 100px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <h2>Signup</h2>
+        <form id="signupForm">
+            <a href="/login">Already have account ? Login</a>
+
+            <label for="username">Username:</label>
+            <input placeholder = "username"type="text" id="username" name="username" required>
+            <label for="password">Password:</label>
+            <input placeholder="password"type="password" id="password" name="password" required>
+            <button type="submit" >Signup</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById("signupForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+         
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const formdata = {
+                username, 
+                password,
+            }
+            
+            fetch("/signup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formdata)
+            })
+            .then(response => response.json())
+            .then(data => {
+                   if (data.message){
+                    document.getElementById("username").value="";
+                    document.getElementById("password").value="";
+                    window.location.href ="/login"
+                   }
+                   else{
+                    document.getElementById("username").value="";
+                    document.getElementById("password").value="";
+                 alert('User already exist')
+                   }
+               
+            })
+            .catch(error => console.error(error));
+        });
+    </script>
+</body>
+</html>

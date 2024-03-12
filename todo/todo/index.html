@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Todo List</title>
+    <style>
+        body {
+            font-family: Arial;
+        }
+
+        body {
+            background-color: beige;
+        }
+
+        .todo-grid,
+        .todo-input-grid {
+            display: grid;
+            grid-template-columns: 200px 150px 150px 100px;
+            column-gap: 10px;
+            row-gap: 10px;
+            align-items: center;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+
+        }
+
+        .todo-input-grid {
+            margin-bottom: 10px;
+            align-items: stretch;
+        }
+
+        .name-input,
+        .due-date-input {
+            font-size: 15px;
+            padding: 6px;
+        }
+
+        .add-todo-button {
+            background-color: green;
+            color: white;
+            border: none;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .delete-todo-button {
+            background-color: darkred;
+            color: white;
+            border: none;
+            font-size: 15px;
+            cursor: pointer;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        .todo {
+            text-align: center;
+            font-weight: bold;
+
+        }
+    </style>
+
+</head>
+
+<body>
+    <p class="todo">Todo List</p>
+
+    <div class="todo-input-grid">
+
+        <input placeholder="Todo name" class="js-name-input name-input">
+        <input type="date" class="js-due-date-input due-date-input">
+        <input type ="time" class="js-due-time" >
+        <button onclick=" addTodo();" class="add-todo-button">Add</button>
+        
+    </div>
+
+    <div class="js-todo-list todo-grid"></div>
+
+    <script>
+        let todoList = [];
+
+
+        function renderTodoList() {
+            let todoListHTML = '';
+
+            todoList.forEach((value,index) => {
+            todoListHTML += `
+            <div>${value.name}</div>
+            <div>${value.dueDate}</div>
+            <div>${value.duetime}</div>
+            <button onclick="
+              todoList.splice(${index}, 1);
+              renderTodoList();
+              deleteTodoList(${index});
+            " class="delete-todo-button">Delete</button> 
+          `;  
+            })
+
+
+
+            document.querySelector('.js-todo-list')
+                .innerHTML = todoListHTML;
+        }
+
+        function addTodo() {
+            const inputElement = document.querySelector('.js-name-input');
+            const name = inputElement.value;
+
+            const dateInputElement = document.querySelector('.js-due-date-input');
+            const dueDate = dateInputElement.value;
+            const timeInputElement= document.querySelector('.js-due-time');
+            const duetime=timeInputElement.value
+            const formdata = {
+                name,
+                dueDate,
+                duetime,
+            }
+
+            fetch("/add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formdata)
+            })
+                .then(response => response.json())
+                .then(data => {
+
+                    const receivedTodos = data.todos;
+
+                    const todosArray = Object.values(receivedTodos);
+                    todoList.length = 0;
+                    todoList.push(...todosArray);
+                    renderTodoList();
+                    console.log(todoList)
+                    console.log(todoList.length)
+                })
+
+
+
+        }
+        function deleteTodoList(a) {
+
+            fetch("/delete", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(a)
+            })
+                .then(response => response.json())
+                .then(data => {
+
+                    const receivedTodos = data.todos;
+
+                    const todosArray = Object.values(receivedTodos);
+                    todoList.length =0;
+                    todoList.push(...todosArray);
+                    renderTodoList();
+                    console.log(todoList)
+                    console.log(todoList.length)
+                })
+        }
+
+        function DisplayTodo() {
+            fetch("/getalltodo", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify()
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    todoList.length = 0;
+                    todoList.push(...data.todos);
+                    renderTodoList();
+                })
+
+        }
+        DisplayTodo()
+    </script>
+</body>
+
+</html>
