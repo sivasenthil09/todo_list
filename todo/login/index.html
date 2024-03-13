@@ -91,7 +91,9 @@ button:hover {
                 })
                 .then(response => response.json())
                 .then(data => {
-                       if (data.message){
+                       if (data.token){
+                        console.log(data.token)
+                        localStorage.setItem("token", data.token);
                         window.location.href ="/todo"
                        }
                        else{

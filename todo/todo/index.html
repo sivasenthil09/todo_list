@@ -70,9 +70,9 @@
 
         <input placeholder="Todo name" class="js-name-input name-input">
         <input type="date" class="js-due-date-input due-date-input">
-        <input type ="time" class="js-due-time" >
+        <input type="time" class="js-due-time">
         <button onclick=" addTodo();" class="add-todo-button">Add</button>
-        
+
     </div>
 
     <div class="js-todo-list todo-grid"></div>
@@ -80,12 +80,14 @@
     <script>
         let todoList = [];
 
+        const token = localStorage.getItem("token");
+        console.log(token);
 
         function renderTodoList() {
             let todoListHTML = '';
 
-            todoList.forEach((value,index) => {
-            todoListHTML += `
+            todoList.forEach((value, index) => {
+                todoListHTML += `
             <div>${value.name}</div>
             <div>${value.dueDate}</div>
             <div>${value.duetime}</div>
@@ -94,7 +96,7 @@
               renderTodoList();
               deleteTodoList(${index});
             " class="delete-todo-button">Delete</button> 
-          `;  
+          `;
             })
 
 
@@ -109,8 +111,8 @@
 
             const dateInputElement = document.querySelector('.js-due-date-input');
             const dueDate = dateInputElement.value;
-            const timeInputElement= document.querySelector('.js-due-time');
-            const duetime=timeInputElement.value
+            const timeInputElement = document.querySelector('.js-due-time');
+            const duetime = timeInputElement.value
             const formdata = {
                 name,
                 dueDate,
@@ -120,13 +122,18 @@
             fetch("/add", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    // "Content-Type": "application/json"
+                    "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify(formdata)
             })
                 .then(response => response.json())
                 .then(data => {
-
+                  if (data.message)
+                  {
+                    window.location.href="/login"
+                  }
+                  else{
                     const receivedTodos = data.todos;
 
                     const todosArray = Object.values(receivedTodos);
@@ -135,6 +142,7 @@
                     renderTodoList();
                     console.log(todoList)
                     console.log(todoList.length)
+                  }
                 })
 
 
@@ -145,38 +153,50 @@
             fetch("/delete", {
                 method: "DELETE",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify(a)
             })
                 .then(response => response.json())
                 .then(data => {
-
+                    if (data.message)
+                  {
+                    window.location.href="/login"
+                  }
+                  else{
                     const receivedTodos = data.todos;
 
                     const todosArray = Object.values(receivedTodos);
-                    todoList.length =0;
+                    todoList.length = 0;
                     todoList.push(...todosArray);
                     renderTodoList();
                     console.log(todoList)
                     console.log(todoList.length)
+                  }
                 })
         }
 
         function DisplayTodo() {
+
             fetch("/getalltodo", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify()
             })
                 .then(response => response.json())
                 .then(data => {
+                    if (data.message)
+                  {
+                    window.location.href="/login"
+                  }
+                  else{
                     console.log(data)
                     todoList.length = 0;
                     todoList.push(...data.todos);
                     renderTodoList();
+                  }
                 })
 
         }
