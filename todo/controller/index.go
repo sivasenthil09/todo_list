@@ -92,6 +92,13 @@ func Add(c *gin.Context) {
 	}
 	var newtodo models.Todo
 	err1 := c.ShouldBindJSON(&newtodo)
+	fmt.Println(newtodo.Duedate)
+	fmt.Println(newtodo.Duetime)
+	fmt.Println(newtodo.Name)
+	if(newtodo.Duedate==""||newtodo.Duetime==""||newtodo.Name==""){
+		c.JSON(http.StatusBadRequest,gin.H{"messages":"no value"})
+		return
+	}
 	fmt.Println(err1)
 	filter := bson.D{{"username", claims.Username}}
 	var user models.User

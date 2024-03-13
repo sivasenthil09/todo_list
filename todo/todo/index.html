@@ -133,6 +133,9 @@
                   {
                     window.location.href="/login"
                   }
+                  else if (data.messages=="no value"){
+                    alert('Enter all fields')
+                  }
                   else{
                     const receivedTodos = data.todos;
 
