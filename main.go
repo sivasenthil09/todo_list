@@ -6,7 +6,8 @@ import (
 	"signup/constants"
 	"signup/controller"
 	"signup/routes"
-
+"os"
+"log"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -30,7 +31,11 @@ func main() {
 
 	r := gin.Default()
 	routes.AppRoutes(r)
-
-	r.Run(constants.Port)
-	
+	port := os.Getenv("PORT")
+    if port == "" {
+        port = "8080" // Default to 8080 if PORT is not set
+    }
+	log.Fatal(r.Run("0.0.0.0:" + port))
 }
+	
+
